@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            body {
+                height: 10000px;
+            }
+
+            video {
+                border: 1px solid #000;
+                display: block;
+                margin: 50px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box">
+            <video
+                src="./video.mp4"
+                class="video"
+                controls
+                muted
+                autoplay
+            ></video>
+        </div>
+        <script>
+            const video = document.querySelector(".video");
+            video.muted = false;
+            const ob = new IntersectionObserver(
+                (entries) => {
+                    const v = entries[0];
+                    if (v.isIntersecting) {
+                        console.log(111);
+                        v.target.play();
+                    } else {
+                        v.target.pause();
+                    }
+                },
+                {
+                    root: document.html,
+                    threshold: 1,
+                }
+            );
+            ob.observe(video);
+            console.log(ob.root);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        margin: 10px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+      const ctx = canvas.getContext("2d");
+
+      let h = 100;
+      let vh = 2;
+      let g = 1;
+      let dir = -30;
+      const fall = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, h, 50, 0, Math.PI * 2);
+        ctx.fillStyle = "red";
+        ctx.fill();
+        h += vh;
+        if (h < canvas.height - 50) {
+          vh += g;
+        } else {
+          vh = -30;
+          if (dir < 0) {
+            vh = dir;
+            dir++;
+          } else {
+            vh = 0;
+            h = canvas.height - 50;
+          }
+        }
+        requestAnimationFrame(fall);
+      };
+      fall();
+    </script>
+  </body>
+</html>

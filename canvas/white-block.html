@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        border: 1px solid #000;
+        position: absolute;
+        left: 50%;
+        margin-top: 50px;
+        transform: translate(-50%);
+        border-radius: 10px;
+      }
+      .cover {
+        border: 1px solid #000;
+        background-color: rgba(0, 0, 0, 0.3);
+        position: absolute;
+        width: 400px;
+        height: 600px;
+        left: 50%;
+        margin-top: 50px;
+        transform: translate(-50%);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        display: none;
+      }
+      .cover .text {
+        color: red;
+        text-shadow: 1px 1px 0 #000;
+        font-size: 45px;
+      }
+      .restart {
+        position: absolute;
+        margin-top: 150px;
+        width: 80px;
+        height: 30px;
+        border-radius: 5px;
+        outline: none;
+        background-color: aqua;
+        border: 1px solid #fff;
+        color: #333;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      .restart:hover {
+        background-color: rgb(3, 238, 238);
+      }
+      .restart:active {
+        background-color: rgb(6, 216, 216);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div class="cover">
+      <div class="text">Game Over</div>
+      <button class="restart">Restart</button>
+    </div>
+    <script src="./utils.js"></script>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      const cover = document.querySelector(".cover");
+      const restart = document.querySelector(".restart");
+      const ctx = createHDCanvas(canvas, 400, 600).getContext("2d");
+
+      function createHDCanvas(canvas, w, h) {
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = w * ratio; // 实际渲染像素
+        canvas.height = h * ratio; // 实际渲染像素
+        canvas.style.width = `${w}px`; // 控制显示大小
+        canvas.style.height = `${h}px`; // 控制显示大小
+        const ctx = canvas.getContext("2d");
+        ctx.scale(ratio, ratio);
+        // canvas 绘制
+        return canvas;
+      }
+      createHDCanvas(canvas, 400, 600);
+      window.onresize = () => {
+        createHDCanvas(canvas, 400, 600);
+      };
+
+      class Rect {
+        constructor(info) {
+          this.info = info;
+          this.color = "black";
+          this.speed = 1;
+        }
+        draw(ctx) {
+          ctx.beginPath();
+          ctx.fillStyle = this.color;
+          ctx.roundRect(
+            this.info.x,
+            this.info.y,
+            this.info.width,
+            this.info.height,
+            10
+          );
+          ctx.fill();
+          ctx.closePath();
+        }
+        update(ctx) {
+          this.draw(ctx);
+          this.info.y += this.speed;
+        }
+      }
+      let blackList = [];
+      // let blackList = [
+      //   new Rect({
+      //     x: 1 * 100,
+      //     y: -150,
+      //   }),
+      // ];
+      const creatLine = () => {
+        for (let i = 1; i <= 3; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * 100, 0);
+          ctx.lineTo(i * 100, canvas.height);
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      };
+
+      // const area = getRandom(1, 4);
+      // const rect = new Rect({
+      //   x: 1 * 100,
+      //   y: -150,
+      // });
+      // rect.asd = 1;
+      // blackList.push(rect);
+
+      canvas.addEventListener("click", (e) => {
+        const ex = e.offsetX;
+        const ey = e.offsetY;
+        blackList.forEach((item, index) => {
+          const { x, y, width, height } = item.info;
+          // 如果上一个没点，下一个就点不了
+          if (index > 1) {
+            if (blackList[index - 1].color === "black") {
+              return;
+            }
+          }
+          if (ex > x && ex < x + width && ey > y && ey < y + height) {
+            console.log(index);
+            item.color = "aqua";
+          }
+        });
+      });
+
+      // 修改速度
+      const changeSpeed = (rect, speed) => {
+        blackList.forEach((item) => {
+          item.speed = speed;
+        });
+        if (rect) {
+          rect.speed = speed;
+        }
+      };
+      // 重新开始
+      restart.addEventListener("click", () => {
+        blackList = [];
+        cover.style.display = "none";
+        const area = getRandom(0, 3);
+        const rect = new Rect({
+          x: area * 100,
+          y: -150,
+          width: 100,
+          height: 150,
+        });
+
+        blackList.push(rect);
+      });
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        creatLine();
+        if (!blackList.length) {
+          const rect = new Rect({
+            x: getRandom(0, 3) * 100,
+            y: -150,
+            width: 100,
+            height: 150,
+          });
+          blackList.push(rect);
+        } else {
+          if (blackList[blackList.length - 1].info.y > -1) {
+            const area = getRandom(0, 3);
+            const rect = new Rect({
+              x: area * 100,
+              y: -150,
+              width: 100,
+              height: 150,
+            });
+            if (blackList.length > 5) {
+              changeSpeed(rect, 2);
+            }
+            if (blackList.length > 10) {
+              changeSpeed(rect, 3);
+            }
+
+            blackList.push(rect);
+          }
+        }
+
+        blackList.forEach((item, index) => {
+          if (item.info.y > canvas.height - 50) {
+            if (item.color == "black") {
+              changeSpeed(0, 0);
+              cover.style.display = "flex";
+            }
+          }
+          item.update(ctx);
+        });
+      };
+      animate();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			.box {
+				width: 400px;
+				height: 400px;
+				margin: 0 auto;
+				border: 1px solid #000;
+			}
+			.head {
+				width: 100%;
+				height: 50px;
+				display: flex;
+				align-items: center;
+				padding: 0 20px;
+				box-sizing: border-box;
+				justify-content: space-between;
+				background-color: #4d425f;
+			}
+
+			.pre-year,
+			.next-year,
+			.pre-month,
+			.next-month,
+			.year,
+			.month {
+				border-radius: 5px;
+				background-color: #a364ff;
+				width: 30px;
+				height: 30px;
+				line-height: 30px;
+				text-align: center;
+				border: 1px solid #000;
+				cursor: pointer;
+				box-sizing: border-box;
+				user-select: none;
+			}
+			.year {
+				background-color: #404040;
+				width: 80px;
+				cursor: default;
+				color: #fff;
+			}
+			.month {
+				background-color: #404040;
+				cursor: default;
+				color: #fff;
+			}
+			.body {
+				width: 100%;
+				height: calc(100% - 90px);
+				display: flex;
+				padding: 20px;
+				box-sizing: border-box;
+				flex-flow: wrap;
+				align-content: start;
+				background-color: #241b35;
+			}
+			.day {
+				width: 30px;
+				height: 30px;
+				box-sizing: border-box;
+				background-color: #a364ff;
+				margin-right: 20px;
+				margin-bottom: 20px;
+				line-height: 30px;
+				text-align: center;
+				color: #e0e0e0;
+				border-radius: 5px;
+			}
+			.week {
+				height: 40px;
+				background-color: #00829b;
+				display: flex;
+				display: flex;
+				align-items: center;
+				padding: 0 20px;
+				box-sizing: border-box;
+			}
+			.week > div {
+				width: 30px;
+				color: #fff;
+
+				height: 30px;
+				box-sizing: border-box;
+				margin-right: 20px;
+				text-align: center;
+				line-height: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<div class="head">
+				<div class="pre-year">&lt;&lt;</div>
+				<div class="pre-month">&lt;</div>
+				<div class="year"></div>
+				<div class="month"></div>
+				<div class="next-month">&gt;</div>
+				<div class="next-year">&gt;&gt;</div>
+			</div>
+			<div class="week">
+				<div>日</div>
+				<div>一</div>
+				<div>二</div>
+				<div>三</div>
+				<div>四</div>
+				<div>五</div>
+				<div>六</div>
+			</div>
+			<div class="body"></div>
+		</div>
+		<script>
+			const preYear = document.querySelector('.pre-year')
+			const preMonth = document.querySelector('.pre-month')
+			const nextYear = document.querySelector('.next-year')
+			const nextMonth = document.querySelector('.next-month')
+			const year = document.querySelector('.year')
+			const month = document.querySelector('.month')
+			const body = document.querySelector('.body')
+			const date = new Date()
+			const nowDate = {
+				year: date.getFullYear(),
+				month: date.getMonth() + 1,
+			}
+
+			year.innerHTML = nowDate.year
+			month.innerHTML = nowDate.month
+
+			const setDays = () => {
+				// 获取每月有多少天
+				const days = new Date(nowDate['year'], nowDate['month'], 0).getDate()
+				// 获取每月一号星期几
+				const week = new Date(nowDate.year, nowDate.month - 1, 1).getDay()
+
+				for (let i = 0; i < days; i++) {
+					const day = document.createElement('div')
+					if (i === 0) {
+						day.style.marginLeft = 50 * week + 'px'
+					}
+					day.classList.add('day')
+					day.innerHTML = i + 1
+					const today = new Date()
+					if (
+						i + 1 === today.getDate() &&
+						nowDate.year === today.getFullYear() &&
+						nowDate.month === today.getMonth() + 1
+					) {
+						day.style.background = '#6A00FF'
+						day.style.color = '#fff'
+					}
+					body.append(day)
+				}
+			}
+			setDays()
+
+			preMonth.addEventListener('click', () => {
+				body.innerHTML = ''
+				const nowMonth = month.innerHTML
+				if (nowMonth == 1) {
+					nowDate.month = 12
+					nowDate.year -= 1
+				} else {
+					nowDate.month -= 1
+				}
+
+				month.innerHTML = nowDate.month
+				year.innerHTML = nowDate.year
+				setDays()
+			})
+
+			nextMonth.addEventListener('click', e => {
+				const nowMonth = month.innerHTML
+				body.innerHTML = ''
+				if (nowMonth == 12) {
+					nowDate.month = 1
+					nowDate.year += 1
+				} else {
+					nowDate.month += 1
+				}
+				month.innerHTML = nowDate.month
+				year.innerHTML = nowDate.year
+				setDays()
+			})
+			preYear.addEventListener('click', () => {
+				const nowYear = year.innerHTML
+
+				if (nowYear == 0) return
+				body.innerHTML = ''
+				nowDate.year -= 1
+				year.innerHTML = nowDate.year
+				setDays()
+			})
+			nextYear.addEventListener('click', () => {
+				body.innerHTML = ''
+				nowDate.year += 1
+				year.innerHTML = nowDate.year
+				setDays()
+			})
+		</script>
+	</body>
+</html>

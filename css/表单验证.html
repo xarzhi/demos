@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            .box {
+                width: 500px;
+                margin: auto;
+                display: flex;
+                justify-content: center;
+            }
+            input {
+                width: 200px;
+                height: 30px;
+                margin-top: 100px;
+                border-radius: 5px;
+                border: 1px solid #000;
+                box-sizing: border-box;
+                padding-left: 10px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app">
+            <div class="box">
+                <form action="">
+                    <input
+                        type="text"
+                        placeholder="请输入数字"
+                        ref="ipt"
+                        @blur="confirm"
+                        v-model="value"
+                    />
+                </form>
+            </div>
+        </div>
+    </body>
+    <script src="../vue.js"></script>
+
+    <script>
+        const vm = new Vue({
+            //声明监控范围
+            el: "#app",
+            //创建m模型数据
+            data: {
+                value: "",
+            },
+            methods: {
+                confirm() {
+                    const keyframs = new KeyframeEffect(
+                        this.$refs.ipt,
+                        [
+                            {
+                                transform: "translate(0)",
+                            },
+                            {
+                                transform: "translate(-10%)",
+                            },
+                            {
+                                transform: "translate(10%)",
+                            },
+                            {
+                                transform: "translate(-5%)",
+                            },
+                            {
+                                transform: "translate(0)",
+                            },
+                        ],
+                        {
+                            duration: 500,
+                        }
+                    );
+                    const ani = new Animation(keyframs);
+                    if (!/^\d+$/.test(this.value) && this.value) {
+                        ani.play();
+                    }
+                },
+            },
+        });
+    </script>
+</html>

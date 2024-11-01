@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            .ipt {
+                width: 200px;
+                height: 50px;
+                position: relative;
+                margin: 100px auto;
+            }
+            .ipt input {
+                border: none;
+                border-bottom: 2px solid blueviolet;
+                height: 20px;
+                outline: none;
+                transition: all 0.5s;
+                position: absolute;
+                bottom: 0;
+            }
+            .ipt label {
+                position: absolute;
+                color: blueviolet;
+                font-size: 14px;
+                bottom: 2px;
+                z-index: 9;
+                cursor: text;
+                transition: all 0.5s;
+                background-color: transparent;
+            }
+            input:focus + label,
+            input:valid + label {
+                transform: translateY(-20px);
+                background-color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="ipt">
+            <input type="text" id="user" required autocomplete="flase" />
+            <label for="user" class="label">用户名</label>
+        </div>
+    </body>
+</html>

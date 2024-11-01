@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        display: block;
+        border: 1px solid #000;
+        margin: 10px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.querySelector("#canvas");
+      canvas.width = 800;
+      canvas.height = 500;
+      const ctx = canvas.getContext("2d");
+      class Ball {
+        constructor(position, style, speed) {
+          this.position = position;
+          this.style = style;
+          this.dir = 1;
+          this.speed = speed;
+        }
+        draw(ctx) {
+          const { x, y } = this.position;
+          ctx.beginPath();
+          ctx.fillStyle = this.style.color;
+          ctx.arc(x, y, this.style.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        update() {
+          this.draw(ctx);
+          this.position.x += this.dir * this.speed;
+          if (
+            this.position.x + this.style.radius > canvas.width ||
+            this.position.x - this.style.radius < 0
+          ) {
+            this.dir *= -1;
+          }
+        }
+      }
+
+      const ball1 = new Ball(
+        { x: 50, y: canvas.height / 2 },
+        {
+          radius: 50,
+          color: "red",
+        },
+        2
+      );
+      ball1.draw(ctx);
+      const ball2 = new Ball(
+        { x: 200, y: canvas.height / 2 },
+        {
+          radius: 50,
+          color: "blue",
+        },
+        4
+      );
+      ball2.draw(ctx);
+
+      const move = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        requestAnimationFrame(move);
+        ball1.update();
+        ball2.update();
+        if (
+          ball2.position.x - ball2.style.radius <
+          ball1.position.x + ball1.style.radius
+        ) {
+          ball2.dir *= -1;
+          ball1.dir *= -1;
+        }
+      };
+      move();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            body {
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas></canvas>
+        <script>
+            const canvas = document.querySelector("canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const ctx = canvas.getContext("2d");
+            function createHDCanvas(canvas, w, h) {
+                const ratio = window.devicePixelRatio || 1;
+                canvas.width = w * ratio; // 实际渲染像素
+                canvas.height = h * ratio; // 实际渲染像素
+                canvas.style.width = `${w}px`; // 控制显示大小
+                canvas.style.height = `${h}px`; // 控制显示大小
+                const ctx = canvas.getContext("2d");
+                ctx.scale(ratio, ratio);
+                // canvas 绘制
+                return canvas;
+            }
+            createHDCanvas(canvas, window.innerWidth, window.innerHeight);
+            window.onresize = () => {
+                createHDCanvas(canvas, window.innerWidth, window.innerHeight);
+            };
+            const render = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(400, 300);
+                ctx.rotate(-Math.PI / 2);
+                ctx.save();
+                ctx.lineCap = "round";
+
+                for (let i = 0; i < 12; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(170, 0);
+                    ctx.lineTo(190, 0);
+                    ctx.lineWidth = 8;
+                    ctx.strokeStyle = "gray";
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.rotate((2 * Math.PI) / 12);
+                }
+
+                ctx.restore();
+                ctx.save();
+                ctx.lineCap = "round";
+
+                for (let i = 0; i < 60; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(180, 0);
+                    ctx.lineTo(190, 0);
+                    ctx.lineWidth = 4;
+
+                    ctx.strokeStyle = "gray";
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.rotate((2 * Math.PI) / 60);
+                }
+
+                const date = new Date();
+                let h = date.getHours();
+                let m = date.getMinutes();
+                let s = date.getSeconds();
+                h = h >= 12 ? h - 12 : h;
+                // 秒针
+                ctx.rotate(((2 * Math.PI) / 60) * s);
+                ctx.beginPath();
+                ctx.moveTo(-30, 0);
+                ctx.lineTo(190, 0);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "red";
+                ctx.lineCap = "round";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+                ctx.save();
+
+                //分针
+                ctx.rotate(
+                    ((2 * Math.PI) / 60) * m + ((2 * Math.PI) / 60 / 60) * s
+                );
+                ctx.beginPath();
+                ctx.moveTo(-30, 0);
+                ctx.lineTo(150, 0);
+                ctx.lineWidth = 4;
+                ctx.lineCap = "round";
+                ctx.strokeStyle = "#888";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+                ctx.save();
+                //时针
+                ctx.rotate(
+                    ((2 * Math.PI) / 12) * h + ((2 * Math.PI) / 12 / 60) * m
+                );
+                ctx.beginPath();
+                ctx.moveTo(-15, 0);
+                ctx.lineTo(110, 0);
+                ctx.lineWidth = 8;
+                ctx.lineCap = "round";
+                ctx.strokeStyle = "#333";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+                ctx.save();
+
+                ctx.restore();
+
+                //原点
+                ctx.beginPath();
+
+                // ctx.fillRect(-6, -6, 12, 12);
+                ctx.arc(0, 0, 9, 0, 2 * Math.PI, true);
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+                ctx.closePath();
+
+                ctx.beginPath();
+
+                ctx.arc(0, 0, 6, 0, 2 * Math.PI, true);
+                ctx.fillStyle = "#000";
+                ctx.fill();
+                ctx.restore();
+                ctx.save();
+
+                requestAnimationFrame(render);
+            };
+            render();
+        </script>
+    </body>
+</html>

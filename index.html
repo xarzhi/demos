@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" />
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+			}
+			#app {
+				width: 100%;
+				height: 100%;
+				box-sizing: border-box;
+				display: flex;
+			}
+			.menu {
+				width: 200px;
+				height: 100%;
+				background-color: red;
+				box-sizing: border-box;
+				padding: 0 10px;
+			}
+			.el-menu {
+				width: 200px;
+				height: 100%;
+			}
+			.main {
+				width: calc(100% - 200px);
+				height: 100%;
+				box-sizing: border-box;
+				padding: 20px;
+			}
+			.main iframe {
+				width: 100%;
+				height: 100%;
+				border-radius: 5px;
+				box-shadow: 1px 1px 10px 5px #ccc;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<el-menu default-active="0" class="el-menu-vertical-demo" background-color="#fafafa" unique-opened>
+				<el-submenu v-for="(item, index) in menu" :index="String(index)" :key="index">
+					<template slot="title">
+						<i class="el-icon-menu"></i>
+						<span>{{item.cate}}</span>
+					</template>
+					<el-menu-item
+						v-for="(item1, index1) in item.content"
+						:index="`${String(index)-String(index1)}`"
+						:key="index1"
+						@click="jump(item1)"
+					>
+						{{item1.title}}
+					</el-menu-item>
+				</el-submenu>
+			</el-menu>
+
+			<div class="main">
+				<iframe :src="preLink" frameborder="0"></iframe>
+			</div>
+		</div>
+		<script src="./vue.js"></script>
+		<script src="./element-ui/lib/index.js"></script>
+		<script type="module">
+			import menu from './menu.js'
+			const vm = new Vue({
+				//声明监控范围
+				el: '#app',
+				//创建m模型数据
+				data: {
+					menu: menu,
+					preLink: './canvas/snake.html',
+				},
+				methods: {
+					jump(item) {
+						this.preLink = item.path
+					},
+				},
+			})
+		</script>
+	</body>
+</html>

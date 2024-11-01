@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                overflow: hidden;
+            }
+            canvas {
+                width: 800px;
+                height: 500px;
+                box-shadow: 0 0 20px 10px gray;
+                display: block;
+                margin: 50px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script>
+            const canvas = document.querySelector("#canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const ctx = canvas.getContext("2d");
+            const canvasRect = canvas.getBoundingClientRect();
+            function createHDCanvas(canvas, w, h) {
+                const ratio = window.devicePixelRatio || 1;
+                canvas.width = w * ratio; // 实际渲染像素
+                canvas.height = h * ratio; // 实际渲染像素
+                canvas.style.width = `${w}px`; // 控制显示大小
+                canvas.style.height = `${h}px`; // 控制显示大小
+                const ctx = canvas.getContext("2d");
+                ctx.scale(ratio, ratio);
+                // canvas 绘制
+                return canvas;
+            }
+            const getRandom = (min, max) => {
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            };
+
+            createHDCanvas(canvas, 800, 500);
+            window.onresize = () => {
+                createHDCanvas(canvas, 800, 500);
+            };
+            const drawRect = (x, y, width, height, color = "black") => {
+                ctx.beginPath();
+
+                ctx.globalCompositeOperation = "destination-over";
+
+                ctx.roundRect(x, y, width, height, 5);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
+            };
+
+            class Food {
+                constructor() {
+                    this.x = getRandom(0, canvasRect.width / 20 - 1) * 20;
+                    this.y = getRandom(0, canvasRect.height / 20 - 1) * 20;
+                }
+                create() {
+                    drawRect(this.x, this.y, 20, 20, "blue");
+                }
+                reset() {
+                    this.x = getRandom(0, canvasRect.width / 20 - 1) * 20;
+                    this.y = getRandom(0, canvasRect.height / 20 - 1) * 20;
+                    this.create();
+                }
+            }
+            const food = new Food();
+
+            class Snake {
+                constructor(params) {
+                    this.len = 20;
+                    this.body = [
+                        { x: 4, y: 2, color: "red" },
+                        { x: 3, y: 2, color: "aqua" },
+                        { x: 2, y: 2, color: "aqua" },
+                        { x: 1, y: 2, color: "aqua" },
+                    ];
+                    this.direction = "right";
+                    this.canChange = false;
+                }
+                create() {
+                    this.body.forEach((item) => {
+                        drawRect(
+                            item.x * 20,
+                            item.y * 20,
+                            this.len,
+                            this.len,
+                            item.color
+                        );
+                    });
+
+                    this.canChange = true;
+                }
+                move() {
+                    for (let i = this.body.length - 1; i > 0; i--) {
+                        this.body[i].x = this.body[i - 1].x;
+                        this.body[i].y = this.body[i - 1].y;
+                    }
+                    switch (this.direction) {
+                        case "top":
+                            this.body[0].y -= 1;
+                            break;
+                        case "left":
+                            this.body[0].x -= 1;
+                            break;
+                        case "bottom":
+                            this.body[0].y += 1;
+                            break;
+                        case "right":
+                            this.body[0].x += 1;
+                            break;
+                    }
+                    // 穿梭墙壁
+                    this.body.forEach((item, index) => {
+                        if (item.x * 20 > canvasRect.width - 20) item.x = 0;
+                        if (item.x < 0) item.x = (canvasRect.width - 20) / 20;
+                        if (item.y * 20 > canvasRect.height - 20) item.y = 0;
+                        if (item.y < 0) item.y = (canvasRect.height - 20) / 20;
+                        if (item.x * 20 === food.x && item.y * 20 === food.y) {
+                            let last = this.body[this.body.length - 1];
+
+                            this.body.push({
+                                x: last.x,
+                                y: last.y,
+                                color: last.color,
+                            });
+                            food.reset();
+                        }
+                        const headX = this.body[0].x;
+                        const headY = this.body[0].y;
+                        if (index !== 0) {
+                            if (headX === item.x && headY === item.y) {
+                                clearInterval(timer);
+                            }
+                        }
+                    });
+                    this.create();
+                }
+            }
+
+            const snake = new Snake();
+            var timer = setInterval(() => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                snake.move();
+                food.create();
+            }, 150);
+
+            document.addEventListener("keydown", (e) => {
+                e = e || e.window;
+                if (!snake.canChange) {
+                    return;
+                }
+                switch (e.keyCode) {
+                    case 87:
+                    case 38:
+                        if (snake.direction === "bottom") break;
+                        snake.direction = "top";
+                        break;
+                    case 83:
+                    case 40:
+                        if (snake.direction === "top") break;
+                        snake.direction = "bottom";
+                        break;
+                    case 65:
+                    case 37:
+                        if (snake.direction === "right") break;
+                        snake.direction = "left";
+                        break;
+                    case 68:
+                    case 39:
+                        if (snake.direction === "left") break;
+                        snake.direction = "right";
+                        break;
+                    default:
+                        break;
+                }
+                snake.canChange = false;
+            });
+        </script>
+    </body>
+</html>

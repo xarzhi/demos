@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .box {
+        width: 1000px;
+        margin: 20px auto;
+        border: 1px solid #000;
+        box-sizing: border-box;
+        padding: 10px;
+        display: flex;
+      }
+      canvas {
+        cursor: crosshair;
+      }
+      .color {
+        height: auto;
+        margin-left: 20px;
+        flex: 1;
+        border: 1px solid #000;
+      }
+      h4 {
+        text-align: center;
+      }
+      .rgba {
+        text-align: center;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 1px solid #000;
+        margin: 100px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" class="file" />
+    <div class="box">
+      <canvas width="500" height="500"></canvas>
+      <div class="color">
+        <h4>颜色rgba</h4>
+        <div class="rgba"></div>
+      </div>
+    </div>
+    <script>
+      const rgba = document.querySelector(".rgba");
+      const file = document.querySelector(".file");
+      const canvas = document.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+
+      file.onchange = (e) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const url = URL.createObjectURL(e.target.files[0]);
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+      };
+
+      canvas.onmousemove = (e) => {
+        const x = e.offsetX;
+        const y = e.offsetY;
+
+        const image = ctx.getImageData(x, y, 1, 1);
+        const r = image.data[0];
+        const g = image.data[1];
+        const b = image.data[2];
+        const a = image.data[3];
+        rgba.style.background = `rgba(${r},${g},${b},${a})`;
+      };
+
+      //
+    </script>
+  </body>
+</html>

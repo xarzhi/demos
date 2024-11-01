@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+            }
+            .box {
+                width: 100%;
+                height: 100%;
+                background-color: #00a8ff;
+                display: flex;
+                justify-content: center;
+                border-radius: 10px;
+            }
+            .water {
+                width: 300px;
+                height: 300px;
+                margin-top: 100px;
+                /* border: 1px solid #000; */
+                border-radius: 29% 71% 70% 30% / 40% 43% 57% 60%;
+                box-shadow: inset 10px 20px 30px rgba(0, 0, 0, 0.5),
+                    10px 20px 30px rgba(0, 0, 0, 0.3),
+                    15px 15px 30px rgba(0, 0, 0, 0.05),
+                    inset -10px -00px 15px rgba(255, 255, 255, 0.8);
+                position: relative;
+                animation: action 5s linear infinite alternate-reverse;
+            }
+            .water::after {
+                content: "";
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 57% 43% 56% 44% / 28% 50% 50% 72%;
+                top: 50px;
+                left: 80px;
+                display: inline-block;
+            }
+            .water::before {
+                content: "";
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 42% 58% 70% 30% / 52% 54% 46% 48%;
+                top: 50px;
+                left: 125px;
+            }
+
+            @keyframes action {
+                0%,
+                100% {
+                    border-radius: 42% 58% 70% 30% / 52% 54% 46% 48%;
+                }
+                25% {
+                    border-radius: 68% 32% 64% 36% / 29% 63% 37% 71%;
+                }
+                50% {
+                    border-radius: 50% 50% 50% 50% / 48% 50% 50% 52%;
+                }
+                75% {
+                    border-radius: 55% 45% 53% 47% / 33% 44% 56% 67%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box">
+            <div class="water"></div>
+        </div>
+    </body>
+</html>

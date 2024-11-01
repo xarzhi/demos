@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                overflow: hidden;
+            }
+            canvas {
+                background-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script src="./utils.js"></script>
+        <script>
+            const canvas = document.querySelector("#canvas");
+
+            const ctx = canvas.getContext("2d");
+
+            let balls = [];
+
+            function createHDCanvas(canvas, w, h) {
+                const ratio = window.devicePixelRatio || 1;
+                canvas.width = w * ratio; // 实际渲染像素
+                canvas.height = h * ratio; // 实际渲染像素
+                canvas.style.width = `${w}px`; // 控制显示大小
+                canvas.style.height = `${h}px`; // 控制显示大小
+                const ctx = canvas.getContext("2d");
+                ctx.scale(ratio, ratio);
+                // canvas 绘制
+                return canvas;
+            }
+            createHDCanvas(canvas, window.innerWidth, window.innerHeight);
+            window.onresize = () => {
+                createHDCanvas(canvas, window.innerWidth, window.innerHeight);
+            };
+            const getRandom = (min, max) => {
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            };
+            function color16() {
+                let r = Math.floor(Math.random() * 256);
+                let g = Math.floor(Math.random() * 256);
+                let b = Math.floor(Math.random() * 256);
+                let color =
+                    "#" + r.toString(16) + g.toString(16) + b.toString(16);
+                return color;
+            }
+
+            const getBoolean = () => {
+                const flag = getRandom(1, 2);
+                return flag === 1 ? -1 : 1;
+            };
+
+            class Ball {
+                constructor(position, style, speed) {
+                    this.position = position;
+                    this.style = style;
+                    this.dirX = Math.random() - 0.5;
+                    this.dirY = Math.random() - 0.5;
+                    this.speed = speed;
+                }
+                draw(ctx) {
+                    const { x, y } = this.position;
+                    ctx.beginPath();
+                    ctx.fillStyle = this.style.color;
+                    ctx.arc(x, y, this.style.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                update() {
+                    this.draw(ctx);
+                    this.position.x += this.dirX;
+                    this.position.y += this.dirY;
+
+                    if (
+                        this.position.x + this.style.radius > canvas.width ||
+                        this.position.x - this.style.radius < 0
+                    ) {
+                        this.dirX *= -1;
+                    }
+                    if (
+                        this.position.y + this.style.radius > canvas.height ||
+                        this.position.y - this.style.radius < 0
+                    ) {
+                        this.dirY *= -1;
+                    }
+                }
+            }
+
+            for (let i = 0; i < 200; i++) {
+                const x = getRandom(0, canvas.width);
+                const y = getRandom(0, canvas.height);
+                const ball = new Ball(
+                    { x: x, y: y },
+                    { radius: 2, color: "aqua" },
+                    getRandom(1, 2)
+                );
+                balls.push(ball);
+            }
+
+            const move = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(move);
+                for (let item of balls) {
+                    item.update();
+                    for (let item1 of balls) {
+                        if (Object.is(item, item1)) {
+                            continue;
+                        }
+                        const width = Math.abs(
+                            item1.position.x - item.position.x
+                        );
+                        const height = Math.abs(
+                            item1.position.y - item.position.y
+                        );
+                        const long = Math.sqrt(
+                            Math.pow(width, 2) + Math.pow(height, 2)
+                        );
+                        if (long < 100) {
+                            ctx.beginPath();
+                            ctx.moveTo(item.position.x, item.position.y);
+                            ctx.lineTo(item1.position.x, item1.position.y);
+                            ctx.strokeStyle = `rgba(255,255,255,${0.2})`;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            };
+            move();
+        </script>
+    </body>
+</html>

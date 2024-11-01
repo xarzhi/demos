@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            .box {
+                column-count: 4;
+                column-gap: 40px;
+                width: 1200px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <div class="box">
+                <div class="item" v-for="(item, index) in 100" :key="index">
+                    <img
+                        :data-src="`https://dummyimage.com/300x${getRandom(
+                300,
+                500
+              )}/${color16()}`"
+                        alt=""
+                        src="./test.jpg"
+                    />
+                </div>
+            </div>
+        </div>
+        <script src="http://unpkg.zhimg.com/vue@2.6.14"></script>
+        <script>
+            const vm = new Vue({
+                //声明监控范围
+                el: "#app",
+                //创建m模型数据
+                data: {},
+                methods: {
+                    getRandom(min, max) {
+                        return Math.floor(
+                            Math.random() * (max - min + 1) + min
+                        );
+                    },
+                    color16() {
+                        let r = Math.floor(Math.random() * 256);
+                        let g = Math.floor(Math.random() * 256);
+                        let b = Math.floor(Math.random() * 256);
+                        let color =
+                            r.toString(16) + g.toString(16) + b.toString(16);
+                        return color;
+                    },
+                },
+                mounted() {
+                    const ob = new IntersectionObserver(
+                        (entries) => {
+                            for (let item of entries) {
+                                if (item.isIntersecting) {
+                                    item.target.src = item.target.dataset.src;
+                                    ob.unobserve(item.target);
+                                }
+                            }
+                        },
+                        {
+                            threshold: 0,
+                            rootMargin: "200px",
+                        }
+                    );
+                    const imgs = document.querySelectorAll("img");
+                    imgs.forEach((item) => {
+                        ob.observe(item);
+                    });
+                },
+            });
+        </script>
+    </body>
+</html>
