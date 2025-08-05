@@ -26,6 +26,10 @@ const menu = [
 				title: '颜色拾取',
 				path: './canvas/cllectColor.html',
 			},
+			{
+				title: '随机树',
+				path: './canvas/randomTree.html',
+			},
 		],
 	},
 	{
@@ -57,10 +61,10 @@ const menu = [
 	{
 		cate: 'Others',
 		content: [
-			{
-				title: '贪吃蛇Dom版',
-				path: './othres/snake/index.html',
-			},
+			// {
+			// 	title: '贪吃蛇Dom版',
+			// 	path: './othres/snake/index.html',
+			// },
 			{
 				title: '日历',
 				path: './othres/calendar.html',
